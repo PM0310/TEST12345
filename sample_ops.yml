@@ -1,0 +1,54 @@
+---
+- name: Sample System Operations
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  tasks:
+
+    - name: Get system uptime
+      command: uptime
+      register: uptime_output
+
+    - name: Show uptime
+      debug:
+        msg: "{{ uptime_output.stdout }}"
+
+    - name: Get current date and time
+      command: date
+      register: date_output
+
+    - name: Show date and time
+      debug:
+        msg: "{{ date_output.stdout }}"
+
+    - name: Check disk usage
+      command: df -h
+      register: disk_output
+
+    - name: Show disk usage
+      debug:
+        msg: "{{ disk_output.stdout_lines }}"
+
+    - name: Check memory usage
+      command: free -h
+      register: memory_output
+
+    - name: Show memory usage
+      debug:
+        msg: "{{ memory_output.stdout_lines }}"
+
+    - name: Get logged-in users
+      command: who
+      register: who_output
+
+    - name: Show logged-in users
+      debug:
+        msg: "{{ who_output.stdout_lines }}"
+
+    - name: Get OS information
+      debug:
+        msg: >
+          OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+          | Kernel: {{ ansible_kernel }}
+          | Architecture: {{ ansible_architecture }}

@@ -4,6 +4,9 @@
   connection: local
   gather_facts: true
 
+  vars:
+    email_recipient: "default@example.com"
+
   tasks:
 
     - name: Get system uptime
@@ -52,3 +55,32 @@
           OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
           | Kernel: {{ ansible_kernel }}
           | Architecture: {{ ansible_architecture }}
+
+    - name: Send summary email
+      community.general.mail:
+        host: localhost
+        port: 25
+        to: "{{ email_recipient }}"
+        subject: "System Operations Report - {{ ansible_hostname }}"
+        body: |
+          System Operations Summary
+          =========================
+          Host      : {{ ansible_hostname }}
+          Date/Time : {{ date_output.stdout }}
+
+          --- Uptime ---
+          {{ uptime_output.stdout }}
+
+          --- Disk Usage ---
+          {{ disk_output.stdout }}
+
+          --- Memory Usage ---
+          {{ memory_output.stdout }}
+
+          --- Logged-in Users ---
+          {{ who_output.stdout }}
+
+          --- OS Information ---
+          OS           : {{ ansible_distribution }} {{ ansible_distribution_version }}
+          Kernel       : {{ ansible_kernel }}
+          Architecture : {{ ansible_architecture }}
